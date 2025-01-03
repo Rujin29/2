@@ -1,0 +1,36 @@
+import sqlite3
+from flask import Flask, request
+
+app = Flask(__name__)
+
+# Ініціалізація бази даних
+def init_db():
+    conn = sqlite3.connect("data.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            content TEXT NOT NULL) """
+                  )
+
+    conn.commit()
+    conn.close()
+
+@app.route("/save_to_db", methods=["GET"])
+def save_to_db():
+    # Отримуємо текст із параметра URL
+    text = request.args.get("text")
+    if not text:
+        return "Error: No text provided in query parameters.", 400
+
+    # Збереження тексту у базу даних
+    conn = sqlite3.connect("data.db")
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO messages (content) VALUES (?)", (text,))
+    conn.commit()
+    conn.close()
+    return f"Data saved to database: {text}", 200
+
+if __name__ == '__main__':
+    init_db()
+    app.run(port=8000)
