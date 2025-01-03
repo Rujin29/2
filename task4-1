@@ -1,0 +1,16 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET"])
+def handle_headers():
+    content_type = request.headers.get("Content-Type")
+    if content_type == "application/json":
+        return jsonify({"message": "Hello, JSON!"})
+    elif content_type == "application/xml":
+        return "<message>Hello, XML!</message>", 200, {"Content-Type": "application/xml"}
+    else:
+        return "Hello, plain text!"
+
+if __name__ == '__main__':
+    app.run(port=8000)
