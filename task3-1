@@ -1,0 +1,21 @@
+from flask import Flask, request
+
+app = Flask(__name__)
+
+
+@app.route("/currency", methods=["GET"])
+def currency():
+    # Отримуємо параметри запиту
+    today = request.args.get("today")  # Параметр "today"
+    key = request.args.get("key")  # Параметр "key"
+
+    # Якщо параметри існують, повертаємо курс валют
+    if today is not None and key is not None:
+        return "USD - 41.5"
+
+    # Якщо параметри відсутні, повертаємо повідомлення про помилку
+    return "Error: Missing query parameters. Use '?today&key=value'", 400
+
+
+if __name__ == '__main__':
+    app.run(port=8000)
