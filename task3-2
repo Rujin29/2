@@ -1,0 +1,19 @@
+from bottle import route, run, request
+
+
+@route("/currency", method="GET")
+def currency():
+    # Отримуємо параметри запиту
+    today = request.query.today  # Параметр "today"
+    key = request.query.key  # Параметр "key"
+
+    # Якщо параметри існують, повертаємо курс валют
+    if today is not None and key is not None:
+        return "USD - 41.5"
+
+    # Якщо параметри відсутні, повертаємо повідомлення про помилку
+    return "Error: Missing query parameters. Use '?today&key=value'", 400
+
+
+if __name__ == '__main__':
+    run(host="127.0.0.1", port=8000)
