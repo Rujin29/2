@@ -1,0 +1,36 @@
+from flask import Flask, request, jsonify
+import requests
+from datetime import datetime, timedelta
+
+app = Flask(__name__)
+
+
+# Функція для отримання курсу валют
+def get_usd_exchange_rate(date):
+    url = f"https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?valcode=USD&date={date}&json"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        if data:
+            return data[0]["rate"]
+    return None
+
+
+@app.route("/currency", methods=["GET"])
+def currency():
+    param = request.args.get("param")
+    if param == "today":
+        date = datetime.now().strftime("%Y%m%d")
+    elif param == "yesterday":
+        date = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
+    else:
+        return "Error: Invalid parameter. Use 'today' or 'yesterday'.", 400
+
+    rate = get_usd_exchange_rate(date)
+    if rate:
+        return f"USD - {rate}"
+    return "Error: Could not fetch the exchange rate.", 500
+
+
+if __name__ == '__main__':
+    app.run(port=8000)
