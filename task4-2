@@ -1,0 +1,16 @@
+from bottle import route, run, request, response
+
+@route("/", method="GET")
+def handle_headers():
+    content_type = request.get_header("Content-Type")
+    if content_type == "application/json":
+        response.content_type = "application/json"
+        return {"message": "Hello, JSON!"}
+    elif content_type == "application/xml":
+        response.content_type = "application/xml"
+        return "<message>Hello, XML!</message>"
+    else:
+        return "Hello, plain text!"
+
+if __name__ == '__main__':
+    run(host="localhost", port=8000)
