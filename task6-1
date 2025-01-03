@@ -1,0 +1,18 @@
+from flask import Flask, request
+
+app = Flask(__name__)
+
+@app.route("/save_to_file", methods=["GET"])
+def save_to_file():
+    # Отримуємо текст із параметра URL
+    text = request.args.get("text")
+    if not text:
+        return "Error: No text provided in query parameters.", 400
+
+    # Збереження тексту у файл
+    with open("data.txt", "a") as file:
+        file.write(text + "\n")
+    return f"Data saved to file: {text}", 200
+
+if __name__ == '__main__':
+    app.run(port=8000)
